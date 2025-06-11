@@ -1,0 +1,36 @@
+{
+  "name": "quiz_app",
+  "version": "1.0.0",
+  "description": "AI-powered quiz website backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "test:manual": "node src/tests/manualQuiz.test.js",
+    "test:ai": "node src/tests/aiQuiz.test.js",
+    "test:mock": "node src/tests/geminiMock.test.js"
+  },
+  "keywords": [
+    "quiz",
+    "ai",
+    "express",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.1.3",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mongoose": "^7.5.0",
+    "dotenv": "^16.3.1",
+    "morgan": "^1.10.0",
+    "joi": "^17.9.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  }
+} 

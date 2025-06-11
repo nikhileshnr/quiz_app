@@ -1,0 +1,50 @@
+# Feature Progress Tracker for AI Quiz Website (Backend Phase)
+
+## ✅ CORE SETUP
+- [x] Setup backend project structure with Node.js, Express, folder structure
+- [x] Setup dotenv, .env, and config loader for API keys and DB connection
+- [x] Setup connection to MongoDB (or SQLite if preferred)
+
+## ✅ DATA MODELS
+- [x] Define Quiz schema/model:
+  - title
+  - difficulty
+  - level (school/undergrad/postgrad)
+  - questions[] with: { text, options[], correctAnswers[], type: "single"/"multiple" }
+
+## ✅ MANUAL QUIZ CREATION
+- [x] Implement POST /quiz/manual
+  - Accepts title, level, difficulty, and questions with 4 options each
+  - Each question has single or multiple correct
+  - Stores quiz in DB
+
+## ✅ AI QUIZ GENERATION (GEMINI)
+- [x] Setup Gemini API config and auth
+- [x] Implement POST /quiz/ai
+  - Accepts topic/description, level, difficulty, number of questions
+  - Uses Gemini API to generate a valid quiz
+  - Mix of single/multiple correct
+  - Stores quiz in DB
+- [x] Create geminiService.js for clean API integration and formatting
+
+## ✅ API UTILITIES
+- [x] Input validation middleware (Joi or custom)
+- [x] Centralized error handler
+- [x] Logger middleware (morgan or custom)
+
+## ✅ OTHER ENDPOINTS
+- [x] GET /quiz/:id → returns one quiz
+- [x] GET /quiz → returns all quizzes (paginated)
+- [x] PUT /quiz/:id → update quiz
+- [x] DELETE /quiz/:id → delete quiz
+
+## ✅ TESTING
+- [x] Basic tests for POST /quiz/manual
+- [x] Basic tests for POST /quiz/ai
+- [x] Mock Gemini response test
+
+## ✅ TASKS ADDED BY CURSOR
+- [x] Create a proper .env file when implementing actual database connection
+- [x] Implement the actual Mongoose schema for Quiz model
+- [x] Add more comprehensive input validation for API endpoints
+- [ ] Add comprehensive API documentation (Swagger/OpenAPI) 
