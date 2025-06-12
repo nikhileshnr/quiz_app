@@ -42,6 +42,8 @@
 - [x] Basic tests for POST /quiz/manual
 - [x] Basic tests for POST /quiz/ai
 - [x] Mock Gemini response test
+- [x] Real Gemini API integration test
+- [x] Create test runner script for all tests
 
 ## ✅ TASKS ADDED BY CURSOR
 - [x] Create a proper .env file when implementing actual database connection

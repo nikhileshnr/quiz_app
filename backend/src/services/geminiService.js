@@ -28,7 +28,7 @@ const generateQuiz = async ({ topic, difficulty, level, questionCount = 5 }) => 
   try {
     // Initialize the Gemini client
     const genAI = initGeminiClient();
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
     // Create the prompt for generating quiz questions
     const prompt = createQuizPrompt({ topic, difficulty, level, questionCount });

@@ -1,0 +1,48 @@
+{
+  "title": "Solar System Quiz",
+  "questions": [
+    {
+      "text": "Which planet is known as the 'Red Planet' due to its iron oxide-rich surface?",
+      "options": [
+        "Venus",
+        "Mars",
+        "Jupiter",
+        "Saturn"
+      ],
+      "correctAnswers": [
+        "Mars"
+      ],
+      "type": "single"
+    },
+    {
+      "text": "Which of the following are characteristics of gas giants?",
+      "options": [
+        "Primarily composed of hydrogen and helium",
+        "Have solid, rocky surfaces",
+        "Possess strong magnetic fields",
+        "Lack moons and rings"
+      ],
+      "correctAnswers": [
+        "Primarily composed of hydrogen and helium",
+        "Possess strong magnetic fields"
+      ],
+      "type": "multiple"
+    },
+    {
+      "text": "Which planet in our solar system has the shortest orbital period?",
+      "options": [
+        "Earth",
+        "Mars",
+        "Mercury",
+        "Venus"
+      ],
+      "correctAnswers": [
+        "Mercury"
+      ],
+      "type": "single"
+    }
+  ],
+  "difficulty": "medium",
+  "level": "school",
+  "createdBy": "ai"
+}

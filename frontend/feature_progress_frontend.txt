@@ -1,0 +1,62 @@
+# Feature Progress Tracker for AI Quiz Website (Frontend Phase)
+
+## ✅ CORE SETUP
+[x] Create React project with Vite
+[x] Setup Tailwind CSS (or preferred modern styling)
+[x] Create base folder structure: components/, pages/, utils/, services/, assets/
+[x] Setup basic routing (React Router DOM)
+
+## ✅ LAYOUT & NAVIGATION
+[x] Create a persistent navigation bar
+[x] Add routing for:
+  - Home ("/")
+  - Create Quiz ("/create")
+  - AI Quiz Generator ("/generate")
+  - View Quizzes ("/quizzes")
+[x] Setup layout wrapper component
+
+## ✅ QUIZ CREATION (MANUAL)
+[x] Create form UI for manual quiz creation:
+  - Title, Level, Difficulty
+  - Add Question (text, 4 options, single/multiple toggle, correct answers)
+  - Dynamic question list builder (add/remove/edit)
+[x] Connect form to backend POST /quiz/manual
+[x] Handle loading/success/error states
+[x] Show success toast/alert after submission
+
+## ✅ AI QUIZ CREATION
+[ ] Create form UI to enter topic/description, level, difficulty, number of questions
+[ ] Connect to backend POST /quiz/ai
+[ ] Show loading animation while generating
+[ ] Display generated quiz summary (title + preview of questions)
+[ ] Allow user to confirm and save to DB
+
+## ✅ QUIZ LISTING
+[ ] Create table/grid to display list of all quizzes (title, level, difficulty)
+[ ] Fetch from GET /quiz
+[ ] Add pagination or infinite scroll (basic)
+
+## ✅ VIEW QUIZ DETAIL
+[ ] Create view page for a single quiz (GET /quiz/:id)
+[ ] Show all questions and their options
+[ ] Mark correct answers visually
+
+## ✅ REACTIVITY & REUSABILITY
+[ ] Extract QuestionCard component
+[ ] Create reusable Input, Select, Button components
+[ ] Create service layer in services/api.js for all backend calls
+[ ] Use context or global state if needed for shared data
+
+## ✅ VALIDATION
+[ ] Client-side validation for required fields
+[ ] Prevent submitting incomplete forms
+[ ] Show error messages inline
+
+## ✅ POLISH
+[ ] Add toast notifications (success/failure)
+[ ] Add loading indicators for async actions
+[ ] Add empty state UI for no quizzes
+[ ] Add mobile responsiveness
+
+## ✅ TASKS ADDED BY CURSOR
+(Add any refactors, bugs, missing flows discovered during development here) 

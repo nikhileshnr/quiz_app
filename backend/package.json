@@ -9,7 +9,9 @@
     "test": "jest",
     "test:manual": "node src/tests/manualQuiz.test.js",
     "test:ai": "node src/tests/aiQuiz.test.js",
-    "test:mock": "node src/tests/geminiMock.test.js"
+    "test:mock": "node src/tests/geminiMock.test.js",
+    "test:integration": "node src/tests/geminiIntegration.test.js",
+    "test:all": "node runTests.js"
   },
   "keywords": [
     "quiz",

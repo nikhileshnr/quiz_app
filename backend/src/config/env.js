@@ -7,13 +7,24 @@ const environment = process.env.NODE_ENV || 'development';
 
 // Try to load .env file, but don't fail if not found
 try {
+  // First try in the backend directory
   const envPath = path.resolve(process.cwd(), '.env');
+  // Also check parent directory in case .env is still at the root
+  const parentEnvPath = path.resolve(process.cwd(), '..', '.env');
+  
   if (fs.existsSync(envPath)) {
     const result = dotenv.config({ path: envPath });
     if (result.error) {
       console.warn(`Error loading .env file: ${result.error.message}`);
     } else {
       console.log('Environment variables loaded from .env file');
+    }
+  } else if (fs.existsSync(parentEnvPath)) {
+    const result = dotenv.config({ path: parentEnvPath });
+    if (result.error) {
+      console.warn(`Error loading .env file from parent directory: ${result.error.message}`);
+    } else {
+      console.log('Environment variables loaded from parent directory .env file');
     }
   } else {
     console.warn('No .env file found. Using default values or system environment variables.');
