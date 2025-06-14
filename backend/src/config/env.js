@@ -86,6 +86,17 @@ const config = {
 
 // Validate the configuration
 const isValid = config.validate();
+
+// Log API key status
+if (!config.api.gemini) {
+  console.error('GEMINI_API_KEY is not set in environment variables. AI quiz generation will not work.');
+} else {
+  const keyLength = config.api.gemini.length;
+  const firstChars = config.api.gemini.substring(0, 4);
+  const lastChars = config.api.gemini.substring(keyLength - 4);
+  console.log(`GEMINI_API_KEY is set (${keyLength} chars, starts with ${firstChars}... ends with ...${lastChars})`);
+}
+
 if (!isValid && config.isProduction) {
   console.error('Invalid configuration. Check your environment variables.');
   process.exit(1);

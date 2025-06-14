@@ -14,21 +14,12 @@ const connectDB = async () => {
       uri = uri.replace(/\/([^/]+)$/, '/$1_test');
     }
     
-    // If we're in development mode with no .env file, we'll mock the connection
-    if (!uri && config.isDevelopment) {
-      console.log('No MongoDB URI provided. Using mock connection for development.');
-      return {
-        connection: {
-          host: 'mock-localhost',
-          port: 27017,
-          name: 'mock-quiz_app'
-        },
-        isMock: true
-      };
-    }
-    
     // Connect to MongoDB
     console.log(`Connecting to MongoDB at ${uri.split('@').pop()}...`); // Don't log credentials
+    
+    if (!uri) {
+      throw new Error('MongoDB URI is required. Please set MONGO_URI in .env file');
+    }
     
     const conn = await mongoose.connect(uri, config.db.options);
     
@@ -36,21 +27,6 @@ const connectDB = async () => {
     return conn;
   } catch (error) {
     console.error(`Error connecting to MongoDB: ${error.message}`);
-    
-    // In development mode, we can continue with a mock connection
-    if (config.isDevelopment) {
-      console.warn('Continuing in development mode with mock database.');
-      return {
-        connection: {
-          host: 'mock-localhost',
-          port: 27017,
-          name: 'mock-quiz_app'
-        },
-        isMock: true
-      };
-    }
-    
-    // In production or test, fail fast
     process.exit(1);
   }
 };

@@ -1,29 +1,46 @@
 const express = require('express');
+const { 
+  createQuiz,
+  getQuizzes,
+  getQuiz,
+  updateQuiz,
+  deleteQuiz,
+  getQuizResults,
+  submitQuiz,
+  getMyAttempts,
+  createAIQuiz,
+  verifyQuestion,
+  regenerateQuestions,
+  createManualQuiz
+} = require('../controllers/quizController');
+
+const { protect, authorize } = require('../middleware/auth');
+
 const router = express.Router();
 
-// Import controllers
-const quizController = require('../controllers/quizController');
+// Protected routes - require login
+router.use(protect);
 
-// Import validation middleware
-const { validateRequest, schemas } = require('../middleware/validateRequest');
+// Get all quizzes based on user role
+router.get('/', getQuizzes);
 
-// Routes
-// GET all quizzes
-router.get('/', quizController.getAllQuizzes);
+// Routes available to students only
+router.get('/my-attempts', authorize('student'), getMyAttempts);
+router.post('/:id/submit', authorize('student'), submitQuiz);
 
-// GET a single quiz
-router.get('/:id', quizController.getQuiz);
+// Routes available to teachers only
+router.post('/', authorize('teacher'), createQuiz);
+router.post('/ai', authorize('teacher'), createAIQuiz);
+router.post('/manual', authorize('teacher'), createManualQuiz);
+router.get('/:id/results', authorize('teacher'), getQuizResults);
 
-// POST a new quiz manually
-router.post('/manual', validateRequest(schemas.quizSchema), quizController.createManualQuiz);
+// AI-related routes
+router.post('/verify-question', verifyQuestion);
+router.post('/regenerate-questions', regenerateQuestions);
 
-// POST a new AI-generated quiz
-router.post('/ai', validateRequest(schemas.aiQuizRequestSchema), quizController.createAIQuiz);
-
-// PUT update a quiz
-router.put('/:id', validateRequest(schemas.quizSchema), quizController.updateQuiz);
-
-// DELETE a quiz
-router.delete('/:id', quizController.deleteQuiz);
+// Routes accessible to both but with role-specific permissions
+router.get('/:id', getQuiz);
+router.put('/:id', authorize('teacher'), updateQuiz);
+router.delete('/:id', authorize('teacher'), deleteQuiz);
 
 module.exports = router; 

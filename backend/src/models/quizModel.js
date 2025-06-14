@@ -2,6 +2,7 @@
 // Will be implemented with MongoDB/Mongoose when we set up the database connection
 
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 // Define the Question schema
 const questionSchema = new mongoose.Schema({
@@ -52,6 +53,32 @@ questionSchema.path('correctAnswers').validate(function(correctAnswers) {
   return true;
 }, 'Single-choice questions must have exactly one correct answer');
 
+// Define a schema for student quiz attempts
+const attemptSchema = new mongoose.Schema({
+  student: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Student ID is required']
+  },
+  score: {
+    type: Number,
+    required: [true, 'Score is required']
+  },
+  maxScore: {
+    type: Number,
+    required: [true, 'Maximum possible score is required']
+  },
+  answers: [{
+    questionIndex: Number,
+    selectedOptions: [String],
+    isCorrect: Boolean
+  }],
+  completedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 // Define the Quiz schema
 const quizSchema = new mongoose.Schema({
   title: {
@@ -87,12 +114,30 @@ const quizSchema = new mongoose.Schema({
     }
   },
   createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Quiz creator is required']
+  },
+  generationMethod: {
     type: String,
     default: 'manual',
     enum: {
       values: ['manual', 'ai'],
-      message: 'Created by must be: manual or ai'
+      message: 'Creation method must be: manual or ai'
     }
+  },
+  invitedStudents: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  attempts: [attemptSchema],
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  timeLimit: {
+    type: Number, // Time limit in minutes, 0 means no limit
+    default: 0
   }
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields automatically
@@ -102,12 +147,21 @@ const quizSchema = new mongoose.Schema({
 
 // Virtual property for the number of questions
 quizSchema.virtual('questionCount').get(function() {
-  return this.questions.length;
+  return this.questions ? this.questions.length : 0;
+});
+
+// Virtual property for the average score
+quizSchema.virtual('averageScore').get(function() {
+  if (!this.attempts || this.attempts.length === 0) return 0;
+  
+  const totalScore = this.attempts.reduce((sum, attempt) => sum + attempt.score, 0);
+  return totalScore / this.attempts.length;
 });
 
 // Index for improved search performance
 quizSchema.index({ title: 'text' });
 quizSchema.index({ difficulty: 1, level: 1 });
+quizSchema.index({ createdBy: 1 }); // Index for creator lookups
 
 // Pre-save hook to ensure consistency
 quizSchema.pre('save', function(next) {

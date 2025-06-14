@@ -14,6 +14,7 @@
   - AI Quiz Generator ("/generate")
   - View Quizzes ("/quizzes")
 [x] Setup layout wrapper component
+[x] Add navigation to Home page buttons (Create Quiz and Generate Quiz)
 
 ## ✅ QUIZ CREATION (MANUAL)
 [x] Create form UI for manual quiz creation:
@@ -25,38 +26,57 @@
 [x] Show success toast/alert after submission
 
 ## ✅ AI QUIZ CREATION
-[ ] Create form UI to enter topic/description, level, difficulty, number of questions
-[ ] Connect to backend POST /quiz/ai
-[ ] Show loading animation while generating
-[ ] Display generated quiz summary (title + preview of questions)
-[ ] Allow user to confirm and save to DB
+[x] Create form UI to enter topic/description, level, difficulty, number of questions
+[x] Connect to backend POST /quiz/ai
+[x] Show loading animation while generating
+[x] Display generated quiz summary (title + preview of questions)
+[x] Allow user to confirm and save to DB
+[x] Fixed implementation to use real Gemini API instead of mock data
 
 ## ✅ QUIZ LISTING
-[ ] Create table/grid to display list of all quizzes (title, level, difficulty)
-[ ] Fetch from GET /quiz
-[ ] Add pagination or infinite scroll (basic)
+[x] Create table/grid to display list of all quizzes (title, level, difficulty)
+[x] Fetch from GET /quiz
+[x] Add pagination or infinite scroll (basic)
+[x] Add empty state UI for no quizzes
+[x] Add success message handling from navigation
+[x] Remove mock data implementation and use real API data only
 
 ## ✅ VIEW QUIZ DETAIL
-[ ] Create view page for a single quiz (GET /quiz/:id)
-[ ] Show all questions and their options
-[ ] Mark correct answers visually
+[x] Create view page for a single quiz (GET /quiz/:id)
+[x] Show all questions and their options
+[x] Mark correct answers visually
+[x] Add edit functionality for teachers to modify quizzes
+[x] Connect to backend PUT /quiz/:id for saving changes
 
 ## ✅ REACTIVITY & REUSABILITY
 [ ] Extract QuestionCard component
 [ ] Create reusable Input, Select, Button components
-[ ] Create service layer in services/api.js for all backend calls
+[x] Create service layer in services/api.js for all backend calls
 [ ] Use context or global state if needed for shared data
 
 ## ✅ VALIDATION
-[ ] Client-side validation for required fields
-[ ] Prevent submitting incomplete forms
-[ ] Show error messages inline
+[x] Client-side validation for required fields
+[x] Prevent submitting incomplete forms
+[x] Show error messages inline
 
 ## ✅ POLISH
-[ ] Add toast notifications (success/failure)
-[ ] Add loading indicators for async actions
-[ ] Add empty state UI for no quizzes
+[x] Add toast notifications (success/failure)
+[x] Add loading indicators for async actions
+[x] Add empty state UI for no quizzes
 [ ] Add mobile responsiveness
 
 ## ✅ TASKS ADDED BY CURSOR
-(Add any refactors, bugs, missing flows discovered during development here) 
+[ ] Add error boundary for handling unexpected errors
+[ ] Add retry mechanism for failed API calls
+[x] Add form validation for AI quiz generation (min/max length for topic, etc.)
+[ ] Add confirmation dialog before navigating away from unsaved changes
+[ ] Add keyboard shortcuts for common actions
+[ ] Add quiz preview mode (hide correct answers)
+[ ] Add quiz statistics (average score, completion rate)
+[ ] Add quiz export functionality (PDF, JSON)
+[ ] Add quiz import functionality
+[ ] Add quiz categories/tags system
+[ ] Add quiz search and filtering
+[ ] Add user progress tracking
+[ ] Add quiz feedback system
+[ ] Add fallback/mock data for development when API is unavailable 

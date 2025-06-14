@@ -1,28 +1,47 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import Button from './common/Button';
+import VerificationResultModal from './common/VerificationResultModal';
+import { XMarkIcon, PlusIcon, TrashIcon, ShieldCheckIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
+import { quizApi } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
-function QuestionForm({ onSave, onCancel, existingQuestion = null }) {
+function QuestionForm({ onSave, onCancel, existingQuestion = null, quizMetadata }) {
   const [question, setQuestion] = useState(
     existingQuestion || {
       text: '',
-      options: ['', '', '', ''],
+      options: ['', ''],
       correctAnswers: [],
       type: 'single'
     }
   );
 
-  const handleTextChange = (e) => {
-    setQuestion({ ...question, text: e.target.value });
-  };
+  const toast = useToast();
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState(null);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  const handleTextChange = (e) => setQuestion({ ...question, text: e.target.value });
 
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...question.options];
     updatedOptions[index] = value;
     setQuestion({ ...question, options: updatedOptions });
   };
+  
+  const handleAddOption = () => {
+      setQuestion(q => ({...q, options: [...q.options, '']}));
+  }
+  
+  const handleRemoveOption = (index) => {
+      if (question.options.length <= 2) return; // Keep at least 2 options
+      const updatedOptions = question.options.filter((_, i) => i !== index);
+      // Also remove from correct answers if it was selected
+      const updatedCorrectAnswers = question.correctAnswers.filter(ans => ans !== question.options[index]);
+      setQuestion({ ...question, options: updatedOptions, correctAnswers: updatedCorrectAnswers });
+  }
 
-  const handleTypeChange = (e) => {
-    // If switching from multiple to single, keep only first answer or none
-    const newType = e.target.value;
+  const handleTypeChange = (newType) => {
     let newCorrectAnswers = question.correctAnswers;
     if (newType === 'single' && question.correctAnswers.length > 1) {
       newCorrectAnswers = question.correctAnswers.slice(0, 1);
@@ -30,25 +49,41 @@ function QuestionForm({ onSave, onCancel, existingQuestion = null }) {
     setQuestion({ ...question, type: newType, correctAnswers: newCorrectAnswers });
   };
 
-  const toggleCorrectAnswer = (index) => {
-    const isSelected = question.correctAnswers.includes(index);
-    let newCorrectAnswers = [...question.correctAnswers];
+  const toggleCorrectAnswer = (option) => {
+    const isSelected = question.correctAnswers.includes(option);
+    let newCorrectAnswers;
 
     if (isSelected) {
-      // Remove if already selected
-      newCorrectAnswers = newCorrectAnswers.filter(i => i !== index);
+      newCorrectAnswers = question.correctAnswers.filter(o => o !== option);
     } else {
-      // Add if not selected
       if (question.type === 'single') {
-        // For single-answer questions, replace any existing answer
-        newCorrectAnswers = [index];
+        newCorrectAnswers = [option];
       } else {
-        // For multiple-answer questions, add to existing answers
-        newCorrectAnswers.push(index);
+        newCorrectAnswers = [...question.correctAnswers, option];
       }
     }
-
     setQuestion({ ...question, correctAnswers: newCorrectAnswers });
+  };
+
+  const handleVerify = async () => {
+    setIsVerifying(true);
+    try {
+      const response = await quizApi.verifyQuestion({
+        question: question,
+        quizParams: quizMetadata
+      });
+
+      if (response.success || response.status === 'success') {
+        setVerificationResult(response.data);
+        setShowVerificationModal(true);
+      } else {
+        toast.showError(response.message || "Verification failed.");
+      }
+    } catch (err) {
+      toast.showError(err.message || "An error occurred during verification.");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -57,105 +92,108 @@ function QuestionForm({ onSave, onCancel, existingQuestion = null }) {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-      <h3 className="text-xl font-semibold mb-4">
-        {existingQuestion ? 'Edit Question' : 'Add New Question'}
-      </h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="question-text">
-            Question Text
-          </label>
-          <textarea
-            id="question-text"
-            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-            value={question.text}
-            onChange={handleTextChange}
-            rows="2"
-            placeholder="Enter your question here"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <span className="block text-gray-700 text-sm font-bold mb-2">Answer Type</span>
-          <div className="flex gap-4">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                value="single"
-                checked={question.type === 'single'}
-                onChange={handleTypeChange}
-                className="form-radio h-4 w-4 text-blue-600"
-              />
-              <span className="ml-2">Single Correct Answer</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                value="multiple"
-                checked={question.type === 'multiple'}
-                onChange={handleTypeChange}
-                className="form-radio h-4 w-4 text-blue-600"
-              />
-              <span className="ml-2">Multiple Correct Answers</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <span className="block text-gray-700 text-sm font-bold mb-2">Options</span>
-          <p className="text-sm text-gray-600 mb-4">
-            {question.type === 'single' 
-              ? 'Select the correct answer' 
-              : 'Select all correct answers'}
-          </p>
-          
-          {question.options.map((option, index) => (
-            <div key={index} className="flex items-center mb-2">
-              <div 
-                className={`flex-shrink-0 w-6 h-6 ${
-                  question.correctAnswers.includes(index) 
-                    ? 'bg-green-500' 
-                    : 'bg-gray-200'
-                } rounded-full mr-3 cursor-pointer`}
-                onClick={() => toggleCorrectAnswer(index)}
-              >
-                <span className="flex justify-center items-center h-full text-white font-bold">
-                  {question.correctAnswers.includes(index) ? '✓' : ''}
-                </span>
-              </div>
-              <input
-                type="text"
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                placeholder={`Option ${index + 1}`}
-                required
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="flex justify-end gap-3">
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
-            >
-              Cancel
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50">
+      <motion.div 
+        className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-xl border border-gray-700 max-h-[90vh] flex flex-col"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+      >
+        <div className="flex justify-between items-center p-4 border-b border-gray-700">
+            <h3 className="text-xl font-bold text-white">
+            {existingQuestion ? 'Edit Question' : 'Add New Question'}
+            </h3>
+            <button onClick={onCancel} className="text-gray-400 hover:text-white">
+                <XMarkIcon className="h-5 w-5" />
             </button>
-          )}
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+        </div>
+
+        <div className="p-4 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Question Text */}
+              <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="question-text">
+                  Question
+                  </label>
+                  <textarea
+                  id="question-text"
+                  className="w-full px-3 py-2 bg-gray-900/70 border-2 border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  value={question.text}
+                  onChange={handleTextChange}
+                  rows="2"
+                  placeholder="e.g., What is the powerhouse of the cell?"
+                  required
+                  />
+              </div>
+
+              {/* Answer Type */}
+              <div>
+                  <span className="block text-sm font-medium text-gray-300 mb-1">Answer Type</span>
+                  <div className="flex gap-2 rounded-lg bg-gray-900/70 p-1 border-2 border-gray-700">
+                      <button type="button" onClick={() => handleTypeChange('single')} className={`w-1/2 py-1 px-2 rounded-md transition-colors ${question.type === 'single' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-700/50'}`}>Single Choice</button>
+                      <button type="button" onClick={() => handleTypeChange('multiple')} className={`w-1/2 py-1 px-2 rounded-md transition-colors ${question.type === 'multiple' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-700/50'}`}>Multiple Choice</button>
+                  </div>
+              </div>
+
+              {/* Options */}
+              <div>
+                  <span className="block text-sm font-medium text-gray-300 mb-1">Options</span>
+                  <div className="space-y-2">
+                  {question.options.map((option, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                          <input
+                              type="text"
+                              value={option}
+                              onChange={(e) => handleOptionChange(index, e.target.value)}
+                              className="w-full px-3 py-2 bg-gray-900/70 border-2 border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                              placeholder={`Option ${index + 1}`}
+                              required
+                          />
+                          <button type="button" onClick={() => toggleCorrectAnswer(option)} className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${question.correctAnswers.includes(option) ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600'}`}>
+                              ✓
+                          </button>
+                          <button type="button" onClick={() => handleRemoveOption(index)} disabled={question.options.length <= 2} className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-gray-700 text-gray-400 hover:bg-red-500/50 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                              <TrashIcon className="h-4 w-4" />
+                          </button>
+                      </div>
+                  ))}
+                  </div>
+                  <Button type="button" onClick={handleAddOption} variant="secondary" className="mt-3 text-xs" size="sm">
+                      <PlusIcon className="h-3 w-3 mr-1" />
+                      Add Option
+                  </Button>
+              </div>
+          </form>
+        </div>
+
+        <div className="flex justify-end gap-2 p-4 border-t border-gray-700 bg-gray-900/30">
+          <Button type="button" onClick={onCancel} variant="primary" size="sm">Cancel</Button>
+          <Button 
+            type="button" 
+            onClick={handleVerify}
+            variant="secondary"
+            size="sm"
+            disabled={isVerifying || !question.text}
+          >
+            {isVerifying ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <ShieldCheckIcon className="h-4 w-4" />}
+            <span className="ml-1">{isVerifying ? 'Verifying...' : 'Verify'}</span>
+          </Button>
+          <Button 
+            onClick={(e) => { e.preventDefault(); handleSubmit(e); }} 
+            variant="accent" 
+            size="sm" 
             disabled={!question.text || question.correctAnswers.length === 0}
           >
-            Save Question
-          </button>
+            Save
+          </Button>
         </div>
-      </form>
+      </motion.div>
+      {showVerificationModal && (
+        <VerificationResultModal
+          result={verificationResult}
+          onClose={() => setShowVerificationModal(false)}
+        />
+      )}
     </div>
   );
 }

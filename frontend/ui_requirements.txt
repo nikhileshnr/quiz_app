@@ -1,0 +1,23 @@
+UI Requirements Tracker (Modern UI Makeover)
+HOMEPAGE REVAMP
+[x] Apply clean, full-width layout with vertical centering
+[x] Use grid or flexbox for section arrangement
+[x] Add a modern hero section with:
+  - App name + tagline
+  - Call to Action (Start Quiz / Create Quiz)
+[x] Use consistent modern font (Google Fonts or Tailwind typography)
+[x] Replace placeholder buttons with modern buttons (hover effects, rounded, shaded)
+[x] Add illustrative SVG/icon or image on homepage (aligned right or background)
+[x] Make header responsive and stick on scroll
+[x] Add a soft background gradient or subtle pattern
+[x] Use card-based layout for quiz highlights or feature preview
+[x] Improve color palette to be visually pleasing (soft, modern contrast)
+[x] Add hover/transition effects on interactive elements
+[x] Add footer with basic links or branding
+[x] Ensure homepage is responsive on all screen sizes
+[x] Use Tailwind CSS custom theme if needed for consistent branding
+[x] Extract UI components (Hero, Button, Card, Footer, Navbar) for reusability
+
+TASKS ADDED BY CURSOR
+(Add new improvements, bugfixes, missing polish as you iterate)
+[ ] Hero component was not extracted due to a technical issue. This should be revisited. 

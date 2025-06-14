@@ -1,0 +1,32 @@
+Full Layout Overhaul Task Tracker (Strict Rebuild)
+HOMEPAGE SECTIONS TO REINVENT
+[x] Hero Section
+  - Purpose: Make an impact on first load
+  - Layout: Full screen height, centered headline, vertical call-to-action stack
+  - Visual: Gradient background + blurred floating icons + subtle pulse
+  - Animation: Fade + scale-in on load
+
+[x] Feature Showcase
+  - Purpose: Show app capabilities with icons and tags
+  - Layout: Staggered grid of feature cards (3 per row)
+  - Visual: Shadowed cards, floating labels, gradient outlines
+
+[x] Quiz Preview Slider
+  - Purpose: Show recently generated quizzes
+  - Layout: Horizontal scroll container with snap scroll
+  - Visual: Cards with hover-lift, embedded preview, tap to expand
+
+[x] Build/Generate Options Split
+  - Purpose: Give user 2 clear CTA paths (Manual vs AI Quiz)
+  - Layout: 2-card layout split left and right, hover expands CTA
+  - Visual: Border-glow buttons, glassy background
+
+[x] Testimonials / Why Use This
+  - Layout: Quote carousel with avatar and animated text transitions
+
+[x] Footer (Redesigned)
+  - Purpose: Socials, About, Terms, Minimal
+  - Layout: 3-column responsive, with logo and minimal design
+
+[ ] Cursor-Discovered Redesign Items
+[x] Navbar (Redesigned) 
